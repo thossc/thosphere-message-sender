@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Message to TMC General</title>
+    <title>send message to shit</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -101,7 +101,7 @@
         
         <div id="status" class="status"></div>
         
-        <div class="hint">Press Enter to send message</div>
+        <div class="hint">press enter to send message to the general hehe</div>
     </div>
 
     <script>
@@ -121,11 +121,11 @@
             const message = messageInput.value.trim();
             
             if (!message) {
-                showStatus('Please enter a message!', 'error');
+                showStatus('pls enter a message', 'error');
                 return;
             }
             
-            showStatus('Sending message...', 'sending');
+            showStatus('sending your message..', 'sending');
             
             const payload = {
                 content: message
@@ -140,7 +140,7 @@
             })
             .then(response => {
                 if (response.ok) {
-                    showStatus('✓ Message sent!', 'success');
+                    showStatus('message sent', 'success');
                     messageInput.value = '';
                     setTimeout(() => {
                         statusDiv.style.display = 'none';
