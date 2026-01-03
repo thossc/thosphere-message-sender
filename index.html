@@ -31,21 +31,27 @@
         }
         
         .option-selector {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             padding: 15px;
             background-color: #f9f9f9;
             border-radius: 8px;
         }
         
+        .option-title {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
         .option-buttons {
             display: flex;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 5px;
         }
         
         .option-btn {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: 2px solid #ddd;
             background-color: white;
             border-radius: 6px;
@@ -131,17 +137,39 @@
             line-height: 1.4;
             margin-left: 8px;
         }
+        
+        .selection-info {
+            background-color: #f0f8ff;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
+            color: #333;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Quandale Message Sender</h1>
         
+        <div class="selection-info" id="selection-info">
+            Sending to: Rules • Type: Embed
+        </div>
+        
         <div class="option-selector">
-            <div>Message Type:</div>
+            <div class="option-title">Channel:</div>
             <div class="option-buttons">
-                <button class="option-btn" onclick="selectOption('normal')">normal</button>
-                <button class="option-btn active" onclick="selectOption('embed')">embed</button>
+                <button class="option-btn active" onclick="selectChannel('rules')">Rules</button>
+                <button class="option-btn" onclick="selectChannel('general')">General</button>
+            </div>
+        </div>
+        
+        <div class="option-selector">
+            <div class="option-title">Message Type:</div>
+            <div class="option-buttons">
+                <button class="option-btn active" onclick="selectType('embed')">Embed</button>
+                <button class="option-btn" onclick="selectType('normal')">Normal</button>
             </div>
         </div>
         
@@ -164,34 +192,62 @@
 
     <script>
         // Webhook URLs
-        const embedWebhook = 'https://discord.com/api/webhooks/1456995044715139179/zK1RDl92e5AmpqgtsSpo1ilPZ1bbRcgnXPSoJCTvGqbKy8Hx8eqfZ1GD8skTkRSQV5Tl';
-        const normalWebhook = 'https://discord.com/api/webhooks/1456997782660448439/Zo6Db4DKjlkJEjVt1IyN3blQ0ZTZhhlHk5NxbNGI5uHibOAq_Eq-4G8qaS1-JoBL39hK';
+        const webhooks = {
+            rules: 'https://discord.com/api/webhooks/1456995044715139179/zK1RDl92e5AmpqgtsSpo1ilPZ1bbRcgnXPSoJCTvGqbKy8Hx8eqfZ1GD8skTkRSQV5Tl',
+            general: 'https://discord.com/api/webhooks/1456997782660448439/Zo6Db4DKjlkJEjVt1IyN3blQ0ZTZhhlHk5NxbNGI5uHibOAq_Eq-4G8qaS1-JoBL39hK'
+        };
         
-        let messageType = 'embed'; // default to embed
+        let channel = 'rules'; // default channel
+        let messageType = 'embed'; // default type
         const messageInput = document.getElementById('message-input');
         const statusDiv = document.getElementById('status');
         const embedPreview = document.getElementById('embed-preview');
-        const optionButtons = document.querySelectorAll('.option-btn');
-
-        function selectOption(type) {
-            messageType = type;
+        const selectionInfo = document.getElementById('selection-info');
+        
+        function selectChannel(selectedChannel) {
+            channel = selectedChannel;
             
-            optionButtons.forEach(btn => {
-                if (btn.textContent.toLowerCase() === type) {
+            // Update channel buttons
+            document.querySelectorAll('.option-selector:nth-child(2) .option-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase() === selectedChannel) {
                     btn.classList.add('active');
                 } else {
                     btn.classList.remove('active');
                 }
             });
             
-            if (type === 'embed') {
+            updateSelectionInfo();
+        }
+        
+        function selectType(selectedType) {
+            messageType = selectedType;
+            
+            // Update type buttons
+            document.querySelectorAll('.option-selector:nth-child(3) .option-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase() === selectedType) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Show/hide embed preview
+            if (selectedType === 'embed') {
                 embedPreview.style.display = 'block';
                 updateEmbedPreview();
             } else {
                 embedPreview.style.display = 'none';
             }
+            
+            updateSelectionInfo();
         }
-
+        
+        function updateSelectionInfo() {
+            const channelName = channel === 'rules' ? 'Rules' : 'General';
+            const typeName = messageType === 'embed' ? 'Embed' : 'Normal';
+            selectionInfo.textContent = `Sending to: ${channelName} • Type: ${typeName}`;
+        }
+        
         function updateEmbedPreview() {
             const message = messageInput.value.trim();
             const previewText = document.querySelector('.embed-text');
@@ -199,7 +255,7 @@
             if (message) {
                 previewText.textContent = message;
             } else {
-                previewText.textContent = 'ts is how your embed will look';
+                previewText.textContent = 'This is how your embed will look';
             }
         }
 
@@ -226,11 +282,10 @@
             
             showStatus('sending ur message...', 'sending');
             
+            const webhookUrl = webhooks[channel];
             let payload;
-            let webhookUrl;
             
             if (messageType === 'embed') {
-                webhookUrl = embedWebhook;
                 payload = {
                     embeds: [{
                         description: message,
@@ -238,7 +293,6 @@
                     }]
                 };
             } else {
-                webhookUrl = normalWebhook;
                 payload = {
                     content: message
                 };
@@ -253,7 +307,8 @@
             })
             .then(response => {
                 if (response.ok) {
-                    showStatus('quandale dinglenutz sent', 'success');
+                    const channelName = channel === 'rules' ? 'Rules' : 'General';
+                    showStatus(`✓ sent to ${channelName}`, 'success');
                     messageInput.value = '';
                     if (messageType === 'embed') {
                         updateEmbedPreview();
@@ -276,7 +331,10 @@
             statusDiv.className = 'status ' + type;
             statusDiv.style.display = 'block';
         }
+        
+        // Initialize
         updateEmbedPreview();
+        updateSelectionInfo();
     </script>
 </body>
 </html>
