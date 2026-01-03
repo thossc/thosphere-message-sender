@@ -124,18 +124,35 @@
         .embed-preview {
             background-color: #2f3136;
             border-radius: 8px;
-            padding: 12px;
+            padding: 0;
             margin-bottom: 15px;
             display: none;
-            border-left: 4px solid #5865F2;
+            overflow: hidden;
+            min-height: 50px;
+        }
+        
+        .embed-color-line {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #5865F2;
+        }
+        
+        .embed-content {
+            padding: 16px;
+            padding-left: 20px;
+            position: relative;
         }
         
         .embed-text {
-            color: #ffffff;
+            color: #dcddde;
             font-family: 'gg sans', 'Noto Sans', Helvetica, Arial, sans-serif;
             font-size: 14px;
             line-height: 1.4;
-            margin-left: 8px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
         }
         
         .selection-info {
@@ -174,7 +191,10 @@
         </div>
         
         <div class="embed-preview" id="embed-preview">
-            <div class="embed-text">ts how your embed will look</div>
+            <div class="embed-content">
+                <div class="embed-color-line"></div>
+                <div class="embed-text" id="embed-text">this is how your embed will look</div>
+            </div>
         </div>
         
         <div class="message-box">
@@ -202,6 +222,7 @@
         const messageInput = document.getElementById('message-input');
         const statusDiv = document.getElementById('status');
         const embedPreview = document.getElementById('embed-preview');
+        const embedText = document.getElementById('embed-text');
         const selectionInfo = document.getElementById('selection-info');
         
         function selectChannel(selectedChannel) {
@@ -250,12 +271,11 @@
         
         function updateEmbedPreview() {
             const message = messageInput.value.trim();
-            const previewText = document.querySelector('.embed-text');
             
             if (message) {
-                previewText.textContent = message;
+                embedText.textContent = message;
             } else {
-                previewText.textContent = 'This is how your embed will look';
+                embedText.textContent = 'this is how your embed will look';
             }
         }
 
