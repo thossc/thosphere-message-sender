@@ -163,7 +163,9 @@
     </div>
 
     <script>
-        const webhookUrl = 'https://discord.com/api/webhooks/1455945373481828537/egg07MYFlctcBeI0Pvq-K7PPu9O0YfV5qSdCEXyVvqpryQ3SAJsyslzS1v36Ucbgs3I1';
+        // Webhook URLs
+        const embedWebhook = 'https://discord.com/api/webhooks/1456995044715139179/zK1RDl92e5AmpqgtsSpo1ilPZ1bbRcgnXPSoJCTvGqbKy8Hx8eqfZ1GD8skTkRSQV5Tl';
+        const normalWebhook = 'https://discord.com/api/webhooks/1456997782660448439/Zo6Db4DKjlkJEjVt1IyN3blQ0ZTZhhlHk5NxbNGI5uHibOAq_Eq-4G8qaS1-JoBL39hK';
         
         let messageType = 'embed'; // default to embed
         const messageInput = document.getElementById('message-input');
@@ -197,7 +199,7 @@
             if (message) {
                 previewText.textContent = message;
             } else {
-                previewText.textContent = 'This is how your embed will look';
+                previewText.textContent = 'ts is how your embed will look';
             }
         }
 
@@ -225,8 +227,10 @@
             showStatus('sending ur message...', 'sending');
             
             let payload;
+            let webhookUrl;
             
             if (messageType === 'embed') {
+                webhookUrl = embedWebhook;
                 payload = {
                     embeds: [{
                         description: message,
@@ -234,6 +238,7 @@
                     }]
                 };
             } else {
+                webhookUrl = normalWebhook;
                 payload = {
                     content: message
                 };
