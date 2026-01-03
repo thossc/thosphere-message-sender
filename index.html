@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>send message to shit</title>
+    <title>quandale message sender</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,15 +12,15 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
+            background-color: #f5f5f5;
         }
         
         .container {
             background-color: white;
-            padding: 30px;
+            padding: 25px;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 400px;
+            width: 500px;
         }
         
         h1 {
@@ -28,19 +28,48 @@
             text-align: center;
             margin-bottom: 25px;
             font-size: 24px;
-            font-weight: normal;
+        }
+        
+        .option-selector {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        
+        .option-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .option-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            background-color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .option-btn.active {
+            border-color: #5865F2;
+            background-color: #5865F2;
+            color: white;
         }
         
         .message-box {
-            position: relative;
+            margin-bottom: 20px;
         }
         
         textarea {
             width: 100%;
-            height: 100px;
+            height: 150px;
             padding: 15px;
             border: 2px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
             resize: none;
             box-sizing: border-box;
@@ -49,13 +78,13 @@
         
         textarea:focus {
             outline: none;
-            border-color: #666;
+            border-color: #5865F2;
         }
         
         .status {
             margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 8px;
             display: none;
             text-align: center;
             font-size: 14px;
@@ -82,33 +111,95 @@
         .hint {
             color: #666;
             font-size: 12px;
-            margin-top: 8px;
+            margin-top: 10px;
             text-align: center;
+        }
+        
+        .embed-preview {
+            background-color: #2f3136;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 15px;
+            display: none;
+            border-left: 4px solid #5865F2;
+        }
+        
+        .embed-text {
+            color: #ffffff;
+            font-family: 'gg sans', 'Noto Sans', Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-left: 8px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>send msg to tmc general bitch</h1>
+        <h1>Quandale Message Sender</h1>
+        
+        <div class="option-selector">
+            <div>Message Type:</div>
+            <div class="option-buttons">
+                <button class="option-btn" onclick="selectOption('normal')">normal</button>
+                <button class="option-btn active" onclick="selectOption('embed')">embed</button>
+            </div>
+        </div>
+        
+        <div class="embed-preview" id="embed-preview">
+            <div class="embed-text">ts how your embed will look</div>
+        </div>
         
         <div class="message-box">
             <textarea 
                 id="message-input" 
-                placeholder="type ur message here and press enter twin <3"
+                placeholder="type ur message here... press enter to send."
                 autofocus
             ></textarea>
         </div>
         
         <div id="status" class="status"></div>
         
-        <div class="hint">press enter to send message to the general hehe</div>
+        <div class="hint">press enter to send message</div>
     </div>
 
     <script>
         const webhookUrl = 'https://discord.com/api/webhooks/1455945373481828537/egg07MYFlctcBeI0Pvq-K7PPu9O0YfV5qSdCEXyVvqpryQ3SAJsyslzS1v36Ucbgs3I1';
-
+        
+        let messageType = 'embed'; // default to embed
         const messageInput = document.getElementById('message-input');
         const statusDiv = document.getElementById('status');
+        const embedPreview = document.getElementById('embed-preview');
+        const optionButtons = document.querySelectorAll('.option-btn');
+
+        function selectOption(type) {
+            messageType = type;
+            
+            optionButtons.forEach(btn => {
+                if (btn.textContent.toLowerCase() === type) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            if (type === 'embed') {
+                embedPreview.style.display = 'block';
+                updateEmbedPreview();
+            } else {
+                embedPreview.style.display = 'none';
+            }
+        }
+
+        function updateEmbedPreview() {
+            const message = messageInput.value.trim();
+            const previewText = document.querySelector('.embed-text');
+            
+            if (message) {
+                previewText.textContent = message;
+            } else {
+                previewText.textContent = 'This is how your embed will look';
+            }
+        }
 
         messageInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
@@ -117,19 +208,36 @@
             }
         });
 
+        messageInput.addEventListener('input', function() {
+            if (messageType === 'embed') {
+                updateEmbedPreview();
+            }
+        });
+
         function sendMessage() {
             const message = messageInput.value.trim();
             
             if (!message) {
-                showStatus('pls enter a message', 'error');
+                showStatus('pls enter msg', 'error');
                 return;
             }
             
-            showStatus('sending your message..', 'sending');
+            showStatus('sending ur message...', 'sending');
             
-            const payload = {
-                content: message
-            };
+            let payload;
+            
+            if (messageType === 'embed') {
+                payload = {
+                    embeds: [{
+                        description: message,
+                        color: 0x5865F2
+                    }]
+                };
+            } else {
+                payload = {
+                    content: message
+                };
+            }
             
             fetch(webhookUrl, {
                 method: 'POST',
@@ -140,8 +248,11 @@
             })
             .then(response => {
                 if (response.ok) {
-                    showStatus('message sent', 'success');
+                    showStatus('quandale dinglenutz sent', 'success');
                     messageInput.value = '';
+                    if (messageType === 'embed') {
+                        updateEmbedPreview();
+                    }
                     setTimeout(() => {
                         statusDiv.style.display = 'none';
                     }, 2000);
@@ -160,6 +271,7 @@
             statusDiv.className = 'status ' + type;
             statusDiv.style.display = 'block';
         }
+        updateEmbedPreview();
     </script>
 </body>
 </html>
