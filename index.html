@@ -6,64 +6,54 @@
     <title>quandale message sender</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f5f5f5;
+            background: #1e1e1e;
         }
         
-        .container {
-            background-color: white;
+        .box {
+            background: #2d2d2d;
             padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            width: 500px;
+            border-radius: 12px;
+            width: 450px;
+            border: 1px solid #444;
         }
         
-        h1 {
-            color: #333;
+        .title {
+            color: #fff;
             text-align: center;
             margin-bottom: 25px;
-            font-size: 24px;
+            font-size: 22px;
+            font-weight: normal;
         }
         
-        .option-selector {
-            margin-bottom: 15px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-        }
-        
-        .option-title {
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #555;
-        }
-        
-        .option-buttons {
+        .dropdowns {
             display: flex;
-            gap: 10px;
-            margin-top: 5px;
+            gap: 15px;
+            margin-bottom: 20px;
         }
         
-        .option-btn {
+        .dropdown {
             flex: 1;
-            padding: 10px;
-            border: 2px solid #ddd;
-            background-color: white;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            text-align: center;
         }
         
-        .option-btn.active {
-            border-color: #5865F2;
-            background-color: #5865F2;
-            color: white;
+        select {
+            width: 100%;
+            padding: 12px;
+            background: #3d3d3d;
+            border: 1px solid #555;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        select:focus {
+            outline: none;
+            border-color: #5865f2;
         }
         
         .message-box {
@@ -72,23 +62,24 @@
         
         textarea {
             width: 100%;
-            height: 150px;
+            height: 140px;
             padding: 15px;
-            border: 2px solid #ddd;
+            background: #3d3d3d;
+            border: 1px solid #555;
             border-radius: 8px;
-            font-size: 16px;
+            color: #fff;
+            font-size: 14px;
             resize: none;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: arial, sans-serif;
         }
         
         textarea:focus {
             outline: none;
-            border-color: #5865F2;
+            border-color: #5865f2;
         }
         
         .status {
-            margin-top: 15px;
+            margin: 15px 0;
             padding: 12px;
             border-radius: 8px;
             display: none;
@@ -97,187 +88,96 @@
         }
         
         .success {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            border: 1px solid #c8e6c9;
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
         }
         
         .error {
-            background-color: #ffebee;
-            color: #c62828;
-            border: 1px solid #ffcdd2;
+            background: rgba(231, 76, 60, 0.1);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
         }
         
         .sending {
-            background-color: #e3f2fd;
-            color: #1565c0;
-            border: 1px solid #bbdefb;
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border: 1px solid #3498db;
         }
         
         .hint {
-            color: #666;
+            color: #888;
             font-size: 12px;
+            text-align: center;
             margin-top: 10px;
-            text-align: center;
         }
         
-        .embed-preview {
-            background-color: #2f3136;
-            border-radius: 8px;
-            padding: 0;
-            margin-bottom: 15px;
-            display: none;
-            overflow: hidden;
-            min-height: 50px;
-        }
-        
-        .embed-color-line {
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background-color: #5865F2;
-        }
-        
-        .embed-content {
-            padding: 16px;
-            padding-left: 20px;
-            position: relative;
-        }
-        
-        .embed-text {
-            color: #dcddde;
-            font-family: 'gg sans', 'Noto Sans', Helvetica, Arial, sans-serif;
-            font-size: 14px;
-            line-height: 1.4;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-        }
-        
-        .selection-info {
-            background-color: #f0f8ff;
-            padding: 10px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            font-size: 14px;
-            text-align: center;
-            color: #333;
+        option {
+            background: #2d2d2d;
+            color: #fff;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Quandale Message Sender</h1>
+    <div class="box">
+        <div class="title">quandale message sender</div>
         
-        <div class="selection-info" id="selection-info">
-            Sending to: Rules • Type: Embed
-        </div>
-        
-        <div class="option-selector">
-            <div class="option-title">Channel:</div>
-            <div class="option-buttons">
-                <button class="option-btn active" onclick="selectChannel('rules')">Rules</button>
-                <button class="option-btn" onclick="selectChannel('general')">General</button>
+        <div class="dropdowns">
+            <div class="dropdown">
+                <select id="channel-select">
+                    <option value="announcements">announcements</option>
+                    <option value="sub-announcements">sub-announcements</option>
+                    <option value="recommendations">recommendations</option>
+                    <option value="chat-about-gaming">chat-about-gaming</option>
+                    <option value="media">media</option>
+                    <option value="your-edits-and-other-stuff">your-edits-and-other-stuff</option>
+                    <option value="your-art">your-art</option>
+                    <option value="poketwo-general">poketwo-general</option>
+                    <option value="rules">rules</option>
+                    <option value="general">general</option>
+                </select>
             </div>
-        </div>
-        
-        <div class="option-selector">
-            <div class="option-title">Message Type:</div>
-            <div class="option-buttons">
-                <button class="option-btn active" onclick="selectType('embed')">Embed</button>
-                <button class="option-btn" onclick="selectType('normal')">Normal</button>
-            </div>
-        </div>
-        
-        <div class="embed-preview" id="embed-preview">
-            <div class="embed-content">
-                <div class="embed-color-line"></div>
-                <div class="embed-text" id="embed-text">this is how your embed will look</div>
+            
+            <div class="dropdown">
+                <select id="type-select">
+                    <option value="embed">embed</option>
+                    <option value="normal">normal</option>
+                </select>
             </div>
         </div>
         
         <div class="message-box">
             <textarea 
                 id="message-input" 
-                placeholder="type ur message here... press enter to send."
+                placeholder="type ur message... press enter to send."
                 autofocus
             ></textarea>
         </div>
         
         <div id="status" class="status"></div>
         
-        <div class="hint">press enter to send message</div>
+        <div class="hint">press enter to send</div>
     </div>
 
     <script>
-        // Webhook URLs
+        // webhook urls for all channels
         const webhooks = {
+            announcements: 'https://discord.com/api/webhooks/1455943993798951108/RUBMWqTjyYheTKzJ08samw1tEo-_qqhyHxnT8SjtkboOToHMQqQ8aHCGeBem5ffxoMtk',
+            'sub-announcements': 'https://discord.com/api/webhooks/1457553095130087532/IyfCXIKupreBF5_vCuMtlI2dE-TALx5AizmRwKOLMg6MUVs-vRdO96-vVUD0wtpkXvF7',
+            recommendations: 'https://discord.com/api/webhooks/1457553263766274100/fuAV6rBPSb0KJegCsy_7fVlI52k3qjw1OB_EQhParoCWXdp34epk0LP2P1yGv6SK5pBl',
+            'chat-about-gaming': 'https://discord.com/api/webhooks/1457553361678368848/5rAexSAsqUfl14WAxLzRMeOmH69NdzRWK685EeM2_P4IcVWGU5zaguRJIpsDJZ_Z_E7N',
+            media: 'https://discord.com/api/webhooks/1457553494004334783/2Q4rahFpVzh_ZOj8MNT1GE5pGlrtCmOKhAbSI-3V2uzb1S5qtRcJlvJIo9JEiUQHeeUX',
+            'your-edits-and-other-stuff': 'https://discord.com/api/webhooks/1457553619938312417/8O5E7kpAtRpmBOPSUTNMWyTfMl2_LGIJ9wo5oZt5XV5FtsGnuihkiv9nYfRZzhsA93R_',
+            'your-art': 'https://discord.com/api/webhooks/1457553906019209218/928GfoFtG_chESs52Ts5t8GOXZ7T2c8_k7UtqnIkUSqHqFBGGiTGQsh_ZtqqS32a9Yp6',
+            'poketwo-general': 'https://discord.com/api/webhooks/1457554090421784748/IiJ43ZrVvr9IE3vk_dU_SJprI5WI4krNIiSif5XkTA41k2DZt-C6f1DjfFrt5gII5btv',
             rules: 'https://discord.com/api/webhooks/1456995044715139179/zK1RDl92e5AmpqgtsSpo1ilPZ1bbRcgnXPSoJCTvGqbKy8Hx8eqfZ1GD8skTkRSQV5Tl',
             general: 'https://discord.com/api/webhooks/1456997782660448439/Zo6Db4DKjlkJEjVt1IyN3blQ0ZTZhhlHk5NxbNGI5uHibOAq_Eq-4G8qaS1-JoBL39hK'
         };
         
-        let channel = 'rules'; // default channel
-        let messageType = 'embed'; // default type
         const messageInput = document.getElementById('message-input');
         const statusDiv = document.getElementById('status');
-        const embedPreview = document.getElementById('embed-preview');
-        const embedText = document.getElementById('embed-text');
-        const selectionInfo = document.getElementById('selection-info');
-        
-        function selectChannel(selectedChannel) {
-            channel = selectedChannel;
-            
-            // Update channel buttons
-            document.querySelectorAll('.option-selector:nth-child(2) .option-btn').forEach(btn => {
-                if (btn.textContent.toLowerCase() === selectedChannel) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            
-            updateSelectionInfo();
-        }
-        
-        function selectType(selectedType) {
-            messageType = selectedType;
-            
-            // Update type buttons
-            document.querySelectorAll('.option-selector:nth-child(3) .option-btn').forEach(btn => {
-                if (btn.textContent.toLowerCase() === selectedType) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-            
-            // Show/hide embed preview
-            if (selectedType === 'embed') {
-                embedPreview.style.display = 'block';
-                updateEmbedPreview();
-            } else {
-                embedPreview.style.display = 'none';
-            }
-            
-            updateSelectionInfo();
-        }
-        
-        function updateSelectionInfo() {
-            const channelName = channel === 'rules' ? 'Rules' : 'General';
-            const typeName = messageType === 'embed' ? 'Embed' : 'Normal';
-            selectionInfo.textContent = `Sending to: ${channelName} • Type: ${typeName}`;
-        }
-        
-        function updateEmbedPreview() {
-            const message = messageInput.value.trim();
-            
-            if (message) {
-                embedText.textContent = message;
-            } else {
-                embedText.textContent = 'this is how your embed will look';
-            }
-        }
+        const channelSelect = document.getElementById('channel-select');
+        const typeSelect = document.getElementById('type-select');
 
         messageInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
@@ -286,21 +186,17 @@
             }
         });
 
-        messageInput.addEventListener('input', function() {
-            if (messageType === 'embed') {
-                updateEmbedPreview();
-            }
-        });
-
         function sendMessage() {
             const message = messageInput.value.trim();
+            const channel = channelSelect.value;
+            const messageType = typeSelect.value;
             
             if (!message) {
                 showStatus('pls enter msg', 'error');
                 return;
             }
             
-            showStatus('sending ur message...', 'sending');
+            showStatus('sending...', 'sending');
             
             const webhookUrl = webhooks[channel];
             let payload;
@@ -327,22 +223,19 @@
             })
             .then(response => {
                 if (response.ok) {
-                    const channelName = channel === 'rules' ? 'Rules' : 'General';
+                    const channelName = channel.replace(/-/g, ' ');
                     showStatus(`✓ sent to ${channelName}`, 'success');
                     messageInput.value = '';
-                    if (messageType === 'embed') {
-                        updateEmbedPreview();
-                    }
                     setTimeout(() => {
                         statusDiv.style.display = 'none';
                     }, 2000);
                 } else {
-                    throw new Error(`HTTP error: ${response.status}`);
+                    throw new Error(`http error: ${response.status}`);
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                showStatus('Failed to send. Try again.', 'error');
+                console.error('error:', error);
+                showStatus('failed to send. try again.', 'error');
             });
         }
 
@@ -351,10 +244,6 @@
             statusDiv.className = 'status ' + type;
             statusDiv.style.display = 'block';
         }
-        
-        // Initialize
-        updateEmbedPreview();
-        updateSelectionInfo();
     </script>
 </body>
 </html>
