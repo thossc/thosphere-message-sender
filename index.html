@@ -84,7 +84,7 @@
         }
         
         .message-box {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         textarea {
@@ -114,6 +114,47 @@
         
         textarea::placeholder {
             color: #777;
+        }
+        
+        .send-button-container {
+            margin-bottom: 20px;
+        }
+        
+        .send-button {
+            width: 100%;
+            padding: 16px;
+            background: #5865f2;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .send-button:hover {
+            background: #4752c4;
+            transform: translateY(-2px);
+        }
+        
+        .send-button:active {
+            transform: translateY(0);
+        }
+        
+        .send-button:disabled {
+            background: #444;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .send-button svg {
+            width: 18px;
+            height: 18px;
         }
         
         .status {
@@ -153,7 +194,7 @@
             color: #666;
             font-size: 13px;
             text-align: center;
-            margin-top: 15px;
+            margin-top: 10px;
             line-height: 1.4;
         }
         
@@ -184,6 +225,19 @@
         textarea::-webkit-scrollbar-thumb:hover,
         select::-webkit-scrollbar-thumb:hover {
             background: #555;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .shortcut-hint {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #888;
+            font-size: 12px;
         }
     </style>
 </head>
@@ -221,16 +275,29 @@
             <div class="message-box">
                 <textarea 
                     id="message-input" 
-                    placeholder="type ur message... press enter to send."
+                    placeholder="type ur message..."
                     autofocus
                     rows="5"
                 ></textarea>
             </div>
             
+            <div class="send-button-container">
+                <button class="send-button" id="send-button">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                    send message
+                </button>
+            </div>
+            
             <div id="status" class="status"></div>
             
             <div class="hint">
-                press enter to send • shift+enter for new line
+                <div class="shortcut-hint">
+                    <span>press enter to send</span>
+                    <span>•</span>
+                    <span>or click the button above</span>
+                </div>
             </div>
         </div>
     </div>
@@ -254,12 +321,22 @@
         const statusDiv = document.getElementById('status');
         const channelSelect = document.getElementById('channel-select');
         const typeSelect = document.getElementById('type-select');
+        const sendButton = document.getElementById('send-button');
 
+        // click button to send
+        sendButton.addEventListener('click', sendMessage);
+
+        // press enter to send
         messageInput.addEventListener('keydown', function(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 sendMessage();
             }
+        });
+
+        // update button state based on input
+        messageInput.addEventListener('input', function() {
+            sendButton.disabled = this.value.trim() === '';
         });
 
         function sendMessage() {
@@ -271,6 +348,15 @@
                 showStatus('pls enter msg', 'error');
                 return;
             }
+            
+            // disable button and show sending state
+            sendButton.disabled = true;
+            sendButton.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                sending...
+            `;
             
             showStatus('sending...', 'sending');
             
@@ -302,7 +388,16 @@
                     const channelName = channel.replace(/-/g, ' ');
                     showStatus(`✓ sent to ${channelName}`, 'success');
                     messageInput.value = '';
+                    
+                    // reset button
                     setTimeout(() => {
+                        sendButton.disabled = false;
+                        sendButton.innerHTML = `
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                            </svg>
+                            send message
+                        `;
                         statusDiv.style.display = 'none';
                     }, 2000);
                 } else {
@@ -312,6 +407,15 @@
             .catch(error => {
                 console.error('error:', error);
                 showStatus('failed to send. try again.', 'error');
+                
+                // reset button on error
+                sendButton.disabled = false;
+                sendButton.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                    send message
+                `;
             });
         }
 
@@ -320,6 +424,9 @@
             statusDiv.className = 'status ' + type;
             statusDiv.style.display = 'block';
         }
+
+        // disable button initially if no text
+        sendButton.disabled = messageInput.value.trim() === '';
     </script>
 </body>
 </html>
