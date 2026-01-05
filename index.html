@@ -194,8 +194,14 @@
             color: #666;
             font-size: 13px;
             text-align: center;
-            margin-top: 10px;
             line-height: 1.4;
+        }
+        
+        .hint-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 4px;
         }
         
         option {
@@ -225,19 +231,6 @@
         textarea::-webkit-scrollbar-thumb:hover,
         select::-webkit-scrollbar-thumb:hover {
             background: #555;
-        }
-        
-        .controls {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .shortcut-hint {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: #888;
-            font-size: 12px;
         }
     </style>
 </head>
@@ -293,10 +286,11 @@
             <div id="status" class="status"></div>
             
             <div class="hint">
-                <div class="shortcut-hint">
-                    <span>press enter to send</span>
-                    <span>•</span>
-                    <span>or click the button above</span>
+                <div class="hint-row">
+                    <span>press enter for new line</span>
+                </div>
+                <div class="hint-row">
+                    <span>click button to send</span>
                 </div>
             </div>
         </div>
@@ -326,12 +320,10 @@
         // click button to send
         sendButton.addEventListener('click', sendMessage);
 
-        // press enter to send
+        // press enter creates new line (removed the preventDefault for sending)
         messageInput.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessage();
-            }
+            // Enter key creates new line (normal behavior)
+            // No action needed - let browser handle it
         });
 
         // update button state based on input
